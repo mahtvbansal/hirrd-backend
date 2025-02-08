@@ -12,7 +12,6 @@ const createCompany = async (data) => {
     // if (existingCompany) {
     //   throw new AppError("Company name already exist", StatusCodes.BAD_REQUEST);
     // }
-    console.log("15");
     const company = await companyRepository.create(data);
     return company;
   } catch (error) {

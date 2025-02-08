@@ -4,6 +4,7 @@ const {
   createUserService,
   loginService,
   setRoleService,
+  getDetailsService
 } = require("../services");
 
 const login = async (req, res) => {
@@ -25,7 +26,6 @@ function isValidEmail(email) {
 
 const signup = async (req, res) => {
   try {
-    console.log(24, req.body);
     const { role, name, username, email, password } = req.body;
 
     // 1. Input Validation (example)
@@ -56,9 +56,22 @@ const changeRole = async (req, res) => {
     return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
   }
 };
+const getDetails = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const response = await getDetailsService(userId);
+    SuccessResponse.data = response;
+    return res.status(StatusCodes.CREATED).json(SuccessResponse);
+  } catch (error) {
+    console.log(error);
+    ErrorResponse.error = error;
+    return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+  }
+};
 
 module.exports = {
   loginController: login,
   signupController: signup,
   changeRoleController: changeRole,
+  getDetailsController: getDetails
 };

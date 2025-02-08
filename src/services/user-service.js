@@ -13,7 +13,7 @@ const login = async (data) => {
     const user = await userRepository.findOne({
       where: { email: email },
     });
-    console.log(15, user);
+    
     if (!user) {
       throw new AppError("Invalid email", StatusCodes.BAD_REQUEST);
     }
@@ -43,14 +43,14 @@ const login = async (data) => {
 const signup = async (data) => {
   try {
     const { email, password, username, name } = data;
-    // 2. Email Existence Check
+    // Email Existence Check
     const existingEmail = await userRepository.findOne({
       where: { email: email },
     });
     if (existingEmail) {
       throw new AppError("Email already exists", StatusCodes.BAD_REQUEST);
     }
-    // 2. Username Existence Check
+    // Username Existence Check
     const existingUsername = await userRepository.findOne({
       where: { username: username },
     });
@@ -58,12 +58,10 @@ const signup = async (data) => {
       throw new AppError("Username already exists", StatusCodes.BAD_REQUEST);
     }
 
-    console.log("reached here");
-
-    // 3. Password Hashing
+    // Password Hashing
     const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
 
-    // 4. User Creation
+    // User Creation
     const newUser = await userRepository.create({
       email,
       password: hashedPassword,
@@ -71,12 +69,12 @@ const signup = async (data) => {
       name,
     });
 
-    // 5. JWT Generation
+    // JWT Generation
     const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET_KEY, {
       expiresIn: "2d",
     });
 
-    // 6. Send Response
+    // Send Response
     const response = {
       token,
       ...newUser.dataValues,
@@ -91,8 +89,19 @@ const signup = async (data) => {
 
 const setRole = async (role, id) => {
     try {
-        const response = await userRepository.update({ role }, id)
-        console.log(response)
+        const response = await userRepository.update({ role }, {id})
+        return response
+    } catch (error) {
+        console.log(error)
+        throw error
+    }
+}
+
+const getDetails = async (id) => {
+    try {
+        const response = await userRepository.get(id, {
+          attributes: {exclude : ['password']}
+        })
         return response
     } catch (error) {
         console.log(error)
@@ -103,5 +112,6 @@ const setRole = async (role, id) => {
 module.exports = {
   createUserService: signup,
   loginService: login,
-  setRoleService : setRole
+  setRoleService : setRole,
+  getDetailsService : getDetails
 };

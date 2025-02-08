@@ -1,6 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
 const { SuccessResponse, ErrorResponse } = require("../utils/common");
-const { saveThisJobService, unsaveThisJobService } = require("../services");
+const { saveThisJobService, unsaveThisJobService, getAllSavedJobsService } = require("../services");
 
 const saveThisJob = async (req, res) => {
   try {
@@ -30,9 +30,9 @@ const unsaveThisJob = async (req, res) => {
 
 const getAllSavedJobs = async (req, res) => {
   try {
-    console.log(req.params, req.body);
-    // const response  = await updateJobStatusService({ status : true })
-    // SuccessResponse.data = response
+    const user_id = req.user.userId
+    const response  = await getAllSavedJobsService(user_id)
+    SuccessResponse.data = response
     return res.status(StatusCodes.OK).json(SuccessResponse);
   } catch (error) {
     console.log(error);
