@@ -1,7 +1,8 @@
 const { StatusCodes } = require("http-status-codes")
-const { createJobsService, findMyJobsService, updateJobStatusService, getAllJobsService, getSingleJobService } = require("../services")
+const { createJobsService, getMyCreatedJobsService, updateJobStatusService, getAllJobsService, getSingleJobService } = require("../services")
 const { SuccessResponse, ErrorResponse } = require("../utils/common")
 const { Sequelize } = require("../models");
+const AppError = require("../utils/errors/app-error");
 
 
 const getAllJobs = async (req, res) => {
@@ -22,7 +23,11 @@ const getAllJobs = async (req, res) => {
 
 const getSingleJob = async (req, res) => {
     try {
-        const response  = await getSingleJobService(req.params.job_id)
+        const response  = await getSingleJobService({job_id : req.params.job_id, candidate_id: req.user.userId })
+        if(!response) {
+            ErrorResponse.error = new AppError("Job not present")
+            return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse)
+        }
         SuccessResponse.data = response
         return res.status(StatusCodes.OK).json(SuccessResponse)
     } catch (error) {
@@ -45,8 +50,7 @@ const createJob = async (req, res) => {
 
 const getMyJobs = async (req, res) => {
     try {
-        console.log(req.params)
-        const response  = await findMyJobsService({ recruiter_id : req.params.recruiter_id })
+        const response  = await getMyCreatedJobsService({ recruiter_id : req.user.userId })
         SuccessResponse.data = response
         return res.status(StatusCodes.OK).json(SuccessResponse)
     } catch (error) {
@@ -56,9 +60,8 @@ const getMyJobs = async (req, res) => {
 
 const updateJobStatus = async (req, res) => {
     try {
-        console.log(req.params, req.body)
-        // const response  = await updateJobStatusService({ status : true })
-        // SuccessResponse.data = response
+        const response  = await updateJobStatusService({ isOpen : req.body.isOpen }, req.params.job_id)
+        SuccessResponse.data = response
         return res.status(StatusCodes.OK).json(SuccessResponse)
     } catch (error) {
         console.log(error)

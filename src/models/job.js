@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       Job.belongsTo(models.User, { foreignKey: 'recruiter_id', as: 'recruiter' });
       Job.belongsTo(models.Company, { foreignKey: 'company_id', as: 'company' }); 
       Job.hasMany(models.SavedJob, { foreignKey: 'job_id', as: 'savedJobs' }); 
+      Job.hasMany(models.Application, {foreignKey: 'job_id', as: 'applications'})
     }
   }
   Job.init({

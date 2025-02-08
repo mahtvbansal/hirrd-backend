@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       User.hasMany(models.Job, { foreignKey: 'recruiter_id', as: 'jobs' });
       User.hasMany(models.SavedJob, { foreignKey: 'user_id', as: 'savedJobs' });
+      User.hasMany(models.Application, {foreignKey: 'candidate_id'})
     }
   }
   User.init({

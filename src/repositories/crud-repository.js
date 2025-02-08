@@ -28,9 +28,9 @@ class CrudRepository {
     }
   }
 
-  async get(data) {
+  async get(data, options) {
     try {
-      const response = await this.model.findByPk(data);
+      const response = await this.model.findByPk(data, options);
       return response;
     } catch (error) {
       logger.error("Something went wrong in crud repo while getting data");
@@ -50,12 +50,10 @@ class CrudRepository {
     }
   }
 
-  async update(data, id) {
+  async update(data, query) {
     try {
       const response = await this.model.update(data, {
-        where: {
-          id: id,
-        },
+        where: query,
       });
       return response;
     } catch (error) {
