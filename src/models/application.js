@@ -38,6 +38,8 @@ module.exports = (sequelize, DataTypes) => {
           model: "Job", // Model name (case-sensitive)
           key: "id",
         },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       candidate_name: {
         type: DataTypes.STRING,

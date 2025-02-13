@@ -1,5 +1,5 @@
 const { StatusCodes } = require("http-status-codes")
-const { createJobsService, getMyCreatedJobsService, updateJobStatusService, getAllJobsService, getSingleJobService } = require("../services")
+const { createJobsService, getMyCreatedJobsService, updateJobStatusService, getAllJobsService, getSingleJobService, deleteJobService } = require("../services")
 const { SuccessResponse, ErrorResponse } = require("../utils/common")
 const { Sequelize } = require("../models");
 const AppError = require("../utils/errors/app-error");
@@ -68,6 +68,20 @@ const updateJobStatus = async (req, res) => {
     }
 }
 
+const deleteJob = async (req, res) => {
+    try {
+        const deletedCount  = await deleteJobService({job_id: req.params.job_id, user_id: req.user.userId})
+        if (deletedCount === 0) {
+            ErrorResponse.error = new AppError("Either it is not a valid job or you are not authorized to delete it", StatusCodes.BAD_REQUEST) 
+            return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse)
+        }
+        return res.status(StatusCodes.OK).json(SuccessResponse)
+    } catch (error) {
+        console.log(error)
+        return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse)
+    }
+}
+
 
 
 
@@ -77,4 +91,5 @@ module.exports = {
     createJobController : createJob,
     getMyJobsController : getMyJobs,
     updateMyJobStatusController : updateJobStatus,
+    deleteJobController: deleteJob
 }
