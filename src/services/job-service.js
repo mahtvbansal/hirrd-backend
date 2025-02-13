@@ -24,7 +24,7 @@ const getAllJobs = async ({user_id, query}) => {
 
 const getSingleJob = async ({ job_id, candidate_id}) => {
   try {
-    const response = await jobRepository.findOne({ job_id, candidate_id});
+    const response = await jobRepository.getJobWithApplicationsData({ job_id, candidate_id});
     response.dataValues.hasApplied = Boolean(response.dataValues.hasApplied);
 
     response.dataValues.applicants = response.dataValues.applications.length;
@@ -69,6 +69,15 @@ const updateJobStatus = async (data, id) => {
     throw error;
   }
 };
+const deleteJob = async ({user_id, job_id}) => {
+  try {
+    const response = await jobRepository.destroy({id: job_id, recruiter_id : user_id})
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
 
 module.exports = {
   getAllJobsService: getAllJobs,
@@ -76,4 +85,5 @@ module.exports = {
   createJobsService: createJob,
   getMyCreatedJobsService: getMyCreatedJobs,
   updateJobStatusService: updateJobStatus,
+  deleteJobService: deleteJob
 };

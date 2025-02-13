@@ -9,7 +9,7 @@ class JobRepository extends CrudRepository {
     super(Job);
   }
 
-  async findOne({ job_id, candidate_id }) {
+  async getJobWithApplicationsData({ job_id, candidate_id }) {
     try {
       const response = await Job.findOne({
         where: { id: job_id },

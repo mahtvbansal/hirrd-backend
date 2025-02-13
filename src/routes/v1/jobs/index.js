@@ -44,4 +44,11 @@ router.get(
   JobsController.getSingleJobController
 ); // Get Single Job
 
+
+router.delete(
+  "/:job_id",
+  authMiddleWare,
+  JobsController.deleteJobController
+); // Get Single Job
+
 module.exports = router;
